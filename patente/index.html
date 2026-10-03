@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>意大利驾照考试</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background:#f5f6f8;color:#1a1a1a;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:66px}
+.btn{border:none;border-radius:10px;cursor:pointer;font-size:.9em;padding:10px 16px;color:#fff;background:#2f6bff}
+.btn.r{background:#ff3b30}.btn.g{background:#22c55e}.btn.w{background:rgba(0,0,0,.5)}
+.page{display:none}.page.active{display:block}
+
+/* 顶部 */
+.top{background:linear-gradient(135deg,#4f8ef7 0%,#2f6bff 100%);padding:20px 18px 16px;border-radius:0 0 24px 24px;color:#fff}
+.top-head{display:flex;align-items:center;gap:12px}
+.avatar{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.greet{font-size:18px;font-weight:700}
+.sub{font-size:12px;opacity:.85;margin-top:3px;line-height:1.5}
+.countdown{background:rgba(255,255,255,.18);border-radius:14px;padding:14px 16px;margin-top:16px;display:flex;justify-content:space-between;align-items:center}
+.cd-item{text-align:center}
+.cd-num{font-size:22px;font-weight:800}
+.cd-label{font-size:11px;opacity:.85;margin-top:2px}
+.cd-divider{width:1px;height:30px;background:rgba(255,255,255,.3)}
+
+/* 卡片 */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+.card{border-radius:18px;padding:18px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);cursor:pointer}
+.card .ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.card .ttl{font-size:16px;font-weight:700}
+.card .dsc{font-size:11px;color:#777;line-height:1.5}
+.c-green{background:#e7f7e9}.c-green .ico{background:#22c55e}
+.c-yellow{background:#fef6e0}.c-yellow .ico{background:#f59e0b}
+.c-pink{background:#fdeef4}.c-pink .ico{background:#ec4899}
+.c-blue{background:#e8f0fe}.c-blue .ico{background:#3b82f6}
+
+/* 工具 */
+.tools{padding:0 18px;margin-top:4px}
+.tools-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tools-title{font-size:16px;font-weight:700}
+.tools-more{font-size:13px;color:#888}
+.tools-more .new{background:#ff3b30;color:#fff;font-size:10px;padding:2px 6px;border-radius:8px;margin-right:4px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 8px;background:#fff;border-radius:18px;padding:18px 10px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.tool{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer}
+.tool .t-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;position:relative}
+.tool .t-name{font-size:11px;color:#444}
+.t-green{background:#e7f7e9}.t-yellow{background:#fef6e0}.t-pink{background:#fdeef4}.t-blue{background:#e8f0fe}.t-purple{background:#efe9fd}.t-orange{background:#ffe9d9}.t-cyan{background:#e0f4f4}.t-gray{background:#eceef2}
+
+/* 章节列表 */
+.list{padding:14px}
+.list-item{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 6px rgba(0,0,0,.04);cursor:pointer}
+.list-item .l-t{font-size:14px;font-weight:600}
+.list-item .l-s{font-size:12px;color:#999;margin-top:3px}
+.list-item .l-badge{background:#2f6bff;color:#fff;font-size:11px;padding:3px 9px;border-radius:10px}
+
+/* 做题页 */
+.quiz{padding:14px}
+.quiz-prog{display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:10px}
+.quiz-bar{height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:14px}
+.quiz-bar div{height:100%;background:#2f6bff;border-radius:3px;transition:width .3s}
+.q-card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.q-it{font-size:17px;line-height:1.6;font-weight:600}
+.q-zh{font-size:14px;color:#666;line-height:1.6;margin-top:8px;padding:10px;background:#f5f6f8;border-radius:10px}
+.q-actions{display:flex;gap:14px;margin-top:18px}
+.q-v,.q-f{flex:1;padding:16px;border:none;border-radius:14px;font-size:17px;font-weight:800;cursor:pointer}
+.q-v{background:#e7f7e9;color:#16a34a}.q-f{background:#fdecec;color:#dc2626}
+.q-v.sel{background:#16a34a;color:#fff}.q-f.sel{background:#dc2626;color:#fff}
+.q-result{margin-top:16px;padding:14px;border-radius:12px;display:none}
+.q-result.ok{background:#e7f7e9;color:#16a34a;display:block}
+.q-result.no{background:#fdecec;color:#dc2626;display:block}
+.q-exp{margin-top:10px;font-size:13px;color:#555;line-height:1.6;background:#f5f6f8;padding:10px;border-radius:10px}
+.q-kw{margin-top:8px;font-size:12px;color:#b45309}
+.q-next{margin-top:16px;width:100%}
+
+/* 我的 */
+.profile{padding:14px}
+.p-card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
+.stat{text-align:center;padding:12px;background:#f5f6f8;border-radius:12px}
+.stat .s-n{font-size:20px;font-weight:800;color:#2f6bff}
+.stat .s-l{font-size:11px;color:#777;margin-top:3px}
+.p-menu{margin-top:14px}
+.p-item{background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.p-item .l{font-size:14px}
+
+/* 底部导航 */
+.tabbar{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;display:flex;border-top:1px solid #eee;padding:8px 0 10px;z-index:100;box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:#999;cursor:pointer}
+.tab.active{color:#2f6bff}
+.tab .t-ic{font-size:22px;position:relative}
+.tab .badge{position:absolute;top:-2px;right:-6px;width:8px;height:8px;background:#ff3b30;border-radius:50%}
+
+/* 登录 */
+#lo{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);z-index:200;display:none;align-items:center;justify-content:center}
+.lo-box{background:#fff;border-radius:16px;padding:24px;width:90%;max-width:340px}
+.lo-box input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0;font-size:15px}
+.back{position:fixed;top:14px;left:14px;background:rgba(0,0,0,.4);color:#fff;padding:8px 12px;border-radius:8px;font-size:13px;cursor:pointer;z-index:50}
+</style>
+</head>
+<body>
+
+<!-- 主页 -->
+<div class="page active" id="page0">
+  <div class="top">
+    <div class="top-head">
+      <div class="avatar">👤</div>
+      <div>
+        <div class="greet" id="greet">Buonasera, 同学</div>
+        <div class="sub">你离"想去哪就去哪"的自由，只差这几千道题的距离。</div>
+      </div>
+    </div>
+    <div class="countdown">
+      <div class="cd-item"><div class="cd-num" id="cdDays">?</div><div class="cd-label">距离考试 ?天</div></div>
+      <div class="cd-divider"></div>
+      <div class="cd-item"><div class="cd-num" id="cdRate">--</div><div class="cd-label">考试通过率</div></div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card c-green" onclick="startExam()"><div class="ico">📝</div><div class="ttl">模拟考试</div><div class="dsc">20 分钟 · 最多错3题</div></div>
+    <div class="card c-yellow" onclick="goSpecial()"><div class="ico">🎯</div><div class="ttl">专项练习</div><div class="dsc">20 分钟 · 带翻译和详解</div></div>
+    <div class="card c-pink" onclick="showWrong()"><div class="ico">📕</div><div class="ttl">错题本</div><div class="dsc">查漏补缺 · 精准提分</div></div>
+    <div class="card c-blue" onclick="goChapters()"><div class="ico">📖</div><div class="ttl">章节练习</div><div class="dsc">25个章节 · 系统学习</div></div>
+  </div>
+  <div class="tools">
+    <div class="tools-head"><div class="tools-title">快捷工具</div><div class="tools-more"><span class="new">new</span>全部 &gt;</div></div>
+    <div class="grid">
+      <div class="tool" onclick="ai()"><div class="t-ico t-purple">🤖</div><div class="t-name">AI助教</div></div>
+      <div class="tool" onclick="showWrong()"><div class="t-ico t-pink">✍️</div><div class="t-name">错题练习</div></div>
+      <div class="tool" onclick="mustQ(1)"><div class="t-ico t-green">✅</div><div class="t-name">必对题</div></div>
+      <div class="tool" onclick="mustQ(0)"><div class="t-ico t-orange">❌</div><div class="t-name">必错题</div></div>
+      <div class="tool" onclick="showFavs()"><div class="t-ico t-yellow">⭐</div><div class="t-name">我的收藏</div></div>
+      <div class="tool" onclick="showWrong()"><div class="t-ico t-cyan">⚠️</div><div class="t-name">易错精选</div></div>
+      <div class="tool" onclick="goProfile()"><div class="t-ico t-blue">📊</div><div class="t-name">学习透视</div></div>
+      <div class="tool" onclick="showHistory()"><div class="t-ico t-gray">🕐</div><div class="t-name">做题历史</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 理论学习 -->
+<div class="page" id="page1">
+  <div style="padding:14px 14px 0"><div style="font-size:17px;font-weight:700">📚 章节练习</div><div style="font-size:12px;color:#999;margin-top:2px">25个章节 · 系统学习</div></div>
+  <div class="list" id="chapList"></div>
+</div>
+
+<!-- 题组列表 -->
+<div class="page" id="page4">
+  <div class="back" onclick="backGroups()">‹ 返回</div>
+  <div style="padding:50px 14px 0"><div style="font-size:17px;font-weight:700" id="grpTitle">题组</div></div>
+  <div class="list" id="grpList" style="padding-top:8px"></div>
+</div>
+
+<!-- 我的 -->
+<div class="page" id="page2">
+  <div class="profile">
+    <div class="p-card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="avatar" style="background:#e8f0fe;width:52px;height:52px;font-size:26px">👤</div>
+        <div><div style="font-size:16px;font-weight:700" id="puName">未登录</div><div style="font-size:12px;color:#999" id="puEmail"></div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="s-n" id="stDone">0</div><div class="s-l">已做题</div></div>
+        <div class="stat"><div class="s-n" id="stRate">0%</div><div class="s-l">正确率</div></div>
+        <div class="stat"><div class="s-n" id="stWrong">0</div><div class="s-l">错题</div></div>
+      </div>
+    </div>
+    <div class="p-menu">
+      <div class="p-item" onclick="showWrong()"><span class="l">📕 错题本</span><span>›</span></div>
+      <div class="p-item" onclick="showFavs()"><span class="l">⭐ 我的收藏</span><span>›</span></div>
+      <div class="p-item" onclick="showHistory()"><span class="l">🕐 做题历史</span><span>›</span></div>
+      <div class="p-item" onclick="setExamDate()"><span class="l">📅 设置考试日期</span><span>›</span></div>
+      <div class="p-item" onclick="logout()"><span class="l" style="color:#dc2626">退出登录</span><span>›</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 做题页 -->
+<div class="page" id="page3">
+  <div class="back" onclick="backQuiz()">‹ 返回</div>
+  <div class="quiz" style="padding-top:56px">
+    <div class="quiz-prog"><span id="qzMode">练习</span><span id="qzProg">1/40</span></div>
+    <div class="quiz-bar"><div id="qzBar" style="width:0%"></div></div>
+    <div class="q-card" ontouchstart="qTouchStart(event)" ontouchend="qTouchEnd(event)">
+      <div class="q-it" id="qzIt">-</div>
+      <div class="q-zh" id="qzZh" style="display:none">-</div>
+      <div style="display:flex;gap:6px;margin-top:12px">
+        <button class="btn w" style="flex:1;font-size:.8em;padding:9px 4px" onclick="readQ()">🔊 读题</button>
+        <button class="btn w" style="flex:1;font-size:.8em;padding:9px 4px" id="qzZhBtn" onclick="toggleZh()">🔍 中文</button>
+        <button class="btn" style="flex:1;font-size:.8em;padding:9px 4px;background:#f59e0b" onclick="showMethod()">💡 解题方法</button>
+      </div>
+      <div class="q-actions">
+        <button class="q-v" id="qzV" onclick="doAnswer(1)">V 对</button>
+        <button class="q-f" id="qzF" onclick="doAnswer(0)">F 错</button>
+      </div>
+      <div class="q-result" id="qzResult"></div>
+      <div class="q-exp" id="qzExp" style="display:none"></div>
+      <div class="q-kw" id="qzKw" style="display:none"></div>
+      <button class="btn q-next" id="qzNext" style="display:none" onclick="nextQ()">下一题 ›</button>
+    </div>
+    <div style="display:flex;justify-content:center;gap:24px;margin-top:14px;font-size:14px">
+      <span>✅ 答对 <b style="color:#16a34a;font-size:17px" id="scRight">0</b></span>
+      <span>❌ 答错 <b style="color:#dc2626;font-size:17px" id="scWrong">0</b></span>
+    </div>
+  </div>
+</div>
+
+<!-- 登录 -->
+<div id="lo">
+  <div class="lo-box">
+    <div style="font-size:18px;font-weight:700;text-align:center;margin-bottom:12px" id="loTitle">登录</div>
+    <input id="lu" placeholder="用户名">
+    <input id="lp" type="password" placeholder="密码">
+    <div id="loErr" style="color:#dc2626;font-size:12px;margin:4px 0;display:none"></div>
+    <button class="btn" style="width:100%;margin-top:8px" onclick="login()">登录</button>
+    <button class="btn w" style="width:100%;margin-top:8px" onclick="reg()">注册</button>
+  </div>
+</div>
+
+<!-- 底部导航 -->
+<div class="tabbar" id="tabbar">
+  <div class="tab active" id="tab0" onclick="showTab(0)"><div class="t-ic">🏠</div><div>主页</div></div>
+  <div class="tab" id="tab1" onclick="showTab(1)"><div class="t-ic">📚</div><div>理论学习</div></div>
+  <div class="tab" id="tab2" onclick="showTab(2)"><div class="t-ic">👤<span class="badge" id="ntfBadge" style="display:none"></span></div><div>我的</div></div>
+</div>
+
+<script>
+var AB=location.hostname.includes('localhost')?'':'api.php';
+var quizList=[],qi=0,qMode='chapter',quizScore=0,quizWrong=0,quizAnswers={},curGroups=[],curChapterName='';
+function api(u,o){var op=o||{};op.headers=op.headers||{};op.headers['Content-Type']='application/json';var usr=localStorage.getItem('ptu');if(usr){op.headers['X-User']=usr;if(!op.method||op.method==='GET'){u=u+(u.indexOf('?')>=0?'&':'?')+'u='+encodeURIComponent(usr)}}return fetch(AB+u,op)}
+
+function showTab(i){
+  for(var j=0;j<3;j++){document.getElementById('tab'+j).className='tab'+(j===i?' active':'');document.getElementById('page'+j).className='page'+(j===i?' active':'')}
+  if(i===0)loadHome();if(i===1)loadChapters();if(i===2)loadProfile();
+}
+
+function loadHome(){
+  var u=localStorage.getItem('ptu');
+  var h=new Date().getHours();
+  var g=h<5?'Buonanotte':h<12?'Buongiorno':h<18?'Buongiorno':'Buonasera';
+  document.getElementById('greet').textContent=g+', '+(u||'同学');
+  api('/api/setting').then(function(r){return r.json()}).then(function(d){
+    if(d.exam_date){var days=Math.ceil((new Date(d.exam_date)-new Date())/86400000);document.getElementById('cdDays').textContent=days>=0?days+'天':'已到期';}
+  });
+  api('/api/stats').then(function(r){return r.json()}).then(function(d){document.getElementById('cdRate').textContent=d.rate+'%'});
+}
+
+function loadChapters(){
+  api('/api/chapters').then(function(r){return r.json()}).then(function(d){
+    var h='';for(var i=0;i<d.length;i++){h+='<div class="list-item" onclick="startChapter('+d[i].id+')"><div><div class="l-t">'+(i+1)+'. '+d[i].name+'</div><div class="l-s">'+(d[i].cnt||0)+' 题</div></div><div class="l-badge">练习 ›</div></div>'}
+    document.getElementById('chapList').innerHTML=h;
+  });
+}
+
+var curChapterName='';
+function startChapter(cid){
+  api('/api/questions?chapter='+cid).then(function(r){return r.json()}).then(function(d){
+    if(!d.length){alert('本章暂无题目');return}
+    // 按题组号分组
+    var groups=[];var seen={};
+    for(var i=0;i<d.length;i++){var g=d[i].gcode||'其他';if(!seen[g]){seen[g]=true;groups.push({gcode:g,gname:d[i].gname,list:d.filter(function(q){return (q.gcode||'其他')===g})})}}
+    curGroups=groups;curChapterName=d[0].gname||'';
+    var h='';
+    for(var k=0;k<groups.length;k++){h+='<div class="list-item" onclick="startGroup('+k+')"><div><div class="l-t">'+groups[k].gcode+' · '+groups[k].gname+'</div><div class="l-s">'+groups[k].list.length+' 题</div></div><div class="l-badge">进入 ›</div></div>'}
+    document.getElementById('grpTitle').textContent='第一章 · 题组';
+    document.getElementById('grpList').innerHTML=h;
+    document.getElementById('page4').className='page active';
+    document.getElementById('page1').className='page';
+  });
+}
+function backGroups(){document.getElementById('page4').className='page';document.getElementById('page1').className='page active';}
+function startGroup(k){
+  quizList=curGroups[k].list;qi=0;qMode='chapter';quizScore=0;
+  document.getElementById('qzMode').textContent=curGroups[k].gcode+' · '+curGroups[k].gname;
+  showQuiz();
+}
+
+function startExam(){
+  api('/api/exam?n=30').then(function(r){return r.json()}).then(function(d){
+    quizList=d;qi=0;qMode='exam';quizScore=0;
+    document.getElementById('qzMode').textContent='模拟考试';
+    showQuiz();
+  });
+}
+function goSpecial(){startExam();}
+function goChapters(){showTab(1);}
+
+function showQuiz(){
+  quizScore=0;quizWrong=0;updateScore();
+  quizList=shuffle(quizList);
+  document.getElementById('page3').className='page active';
+  document.getElementById('page0').className='page';document.getElementById('page1').className='page';document.getElementById('page2').className='page';document.getElementById('page4').className='page';
+  document.getElementById('tabbar').style.display='none';
+  showQ();
+}
+function backQuiz(){document.getElementById('page3').className='page';document.getElementById('tabbar').style.display='flex';showTab(0);}
+
+function showQ(){
+  if(window.speechSynthesis)speechSynthesis.cancel();
+  var q=quizList[qi];
+  document.getElementById('qzProg').textContent=(qi+1)+'/'+quizList.length;
+  document.getElementById('qzBar').style.width=((qi+1)/quizList.length*100)+'%';
+  document.getElementById('qzIt').textContent=q.q_it;
+  document.getElementById('qzZh').textContent=q.q_zh;
+  document.getElementById('qzZh').style.display='none';
+  document.getElementById('qzZhBtn').textContent='🔍 查看中文';
+  var a=quizAnswers[qi];
+  setBtnState(a);
+  document.getElementById('qzExp').style.display='none';
+  document.getElementById('qzKw').style.display='none';
+  if(a!==undefined){
+    var correct=(a===q.answer);
+    var res=document.getElementById('qzResult');
+    res.className='q-result '+(correct?'ok':'no');
+    res.textContent=(correct?'✔ 正确！':'✘ 错误！')+' 你的选择：'+(a?'V（对）':'F（错）')+(correct?'':'，正确答案：'+(q.answer?'V（对）':'F（错）'));
+    document.getElementById('qzV').disabled=true;
+    document.getElementById('qzF').disabled=true;
+    document.getElementById('qzNext').style.display='block';
+  }else{
+    document.getElementById('qzResult').className='q-result';document.getElementById('qzResult').textContent='';
+    document.getElementById('qzNext').style.display='none';
+    document.getElementById('qzV').disabled=false;
+    document.getElementById('qzF').disabled=false;
+  }
+}
+
+function doAnswer(ua){
+  var q=quizList[qi];
+  var correct=(ua===q.answer);
+  if(correct)quizScore++;else quizWrong++;
+  quizAnswers[qi]=ua;
+  updateScore();
+  setBtnState(ua);
+  var res=document.getElementById('qzResult');
+  res.className='q-result '+(correct?'ok':'no');
+  res.textContent=(correct?'✔ 正确！':'✘ 错误！')+' 你的选择：'+(ua?'V（对）':'F（错）')+(correct?'':'，正确答案：'+(q.answer?'V（对）':'F（错）'));
+  document.getElementById('qzV').disabled=true;
+  document.getElementById('qzF').disabled=true;
+  document.getElementById('qzNext').style.display='block';
+  api('/api/answer',{method:'POST',body:JSON.stringify({question_id:q.id,answer:ua,mode:qMode})});
+}
+function setBtnState(ua){var v=document.getElementById('qzV'),f=document.getElementById('qzF');v.className='q-v'+(ua===1?' sel':'');f.className='q-f'+(ua===0?' sel':'');}
+function updateScore(){
+  document.getElementById('scRight').textContent=quizScore;
+  document.getElementById('scWrong').textContent=quizWrong;
+}
+function showMethod(){
+  var q=quizList[qi];
+  var exp=document.getElementById('qzExp');
+  if(q.explain){exp.style.display='block';exp.textContent='📖 解题方法：'+q.explain;}
+  document.getElementById('qzIt').innerHTML=highlightKw(q.q_it,q.keyword);
+  var kw=document.getElementById('qzKw');
+  if(q.keyword){kw.style.display='block';kw.textContent='💡 关键词：'+q.keyword;}
+}
+function highlightKw(text,kw){
+  if(!kw)return text;
+  var idx=text.toLowerCase().indexOf(kw.toLowerCase());
+  if(idx<0)return text;
+  return text.substring(0,idx)+'<span style="color:#d97706;font-weight:800">'+text.substring(idx,idx+kw.length)+'</span>'+text.substring(idx+kw.length);
+}
+
+function prevQ(){if(qi>0){qi--;showQ()}}
+function nextQ(){
+  qi++;
+  if(qi>=quizList.length){
+    if(qMode==='exam'){
+      var wrong=quizList.length-quizScore;
+      api('/api/exam_submit',{method:'POST',body:JSON.stringify({total:quizList.length,correct:quizScore,wrong:wrong,used_time:0})});
+      alert('考试结束！\n共'+quizList.length+'题，答对'+quizScore+'题，答错'+wrong+'题。'+(wrong<=3?'\n🎉 通过！':'\n未通过（超过3题错误）'));
+    }else{
+      alert('练习完成！答对 '+quizScore+' / '+quizList.length);
+    }
+    backQuiz();return;
+  }
+  showQ();
+}
+
+function showWrong(){
+  api('/api/wrong').then(function(r){return r.json()}).then(function(d){
+    if(!d.length){alert('错题本为空，继续加油！');return}
+    quizList=d;qi=0;qMode='wrong';quizScore=0;
+    document.getElementById('qzMode').textContent='错题练习';
+    showQuiz();
+  });
+}
+function showFavs(){
+  api('/api/favs').then(function(r){return r.json()}).then(function(d){
+    if(!d.length){alert('暂无收藏');return}
+    quizList=d;qi=0;qMode='fav';quizScore=0;
+    document.getElementById('qzMode').textContent='我的收藏';
+    showQuiz();
+  });
+}
+function showHistory(){goProfile();}
+function mustQ(v){
+  api('/api/questions?chapter=1').then(function(r){return r.json()}).then(function(d){
+    quizList=d.filter(function(q){return q.answer===v});qi=0;qMode='must';quizScore=0;
+    document.getElementById('qzMode').textContent=v?'必对题':'必错题';
+    showQuiz();
+  });
+}
+function ai(){alert('AI助教：可以问我任何题目的解析，开发中')}
+
+function loadProfile(){
+  var u=localStorage.getItem('ptu');
+  document.getElementById('puName').textContent=u||'未登录';
+  api('/api/stats').then(function(r){return r.json()}).then(function(d){
+    document.getElementById('stDone').textContent=d.total;
+    document.getElementById('stRate').textContent=d.rate+'%';
+    document.getElementById('stWrong').textContent=d.wrong;
+  });
+}
+function goProfile(){showTab(2);}
+
+function setExamDate(){
+  var d=prompt('输入考试日期（格式 2026-12-31）：');
+  if(!d)return;
+  api('/api/setting',{method:'POST',body:JSON.stringify({exam_date:d})}).then(function(){loadHome();alert('已保存')});
+}
+
+function login(){
+  var u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value.trim();
+  api('/api/login',{method:'POST',body:JSON.stringify({u:u,p:p})}).then(function(r){return r.json()}).then(function(d){
+    if(d.ok){localStorage.setItem('ptu',d.u);document.getElementById('lo').style.display='none';showTab(0);}
+    else{var e=document.getElementById('loErr');e.style.display='block';e.textContent=d.e;}
+  });
+}
+function reg(){
+  var u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value.trim();
+  if(!u||!p){alert('请输入用户名和密码');return}
+  api('/api/register',{method:'POST',body:JSON.stringify({u:u,p:p,p2:p})}).then(function(r){return r.json()}).then(function(d){
+    if(d.ok){localStorage.setItem('ptu',d.u);document.getElementById('lo').style.display='none';showTab(0);}
+    else alert(d.e);
+  });
+}
+function logout(){localStorage.removeItem('ptu');location.reload();}
+
+function readQ(){
+  var q=quizList[qi];
+  if(!window.speechSynthesis){alert('浏览器不支持语音');return}
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(q.q_it);
+  u.lang='it-IT';u.rate=0.85;
+  speechSynthesis.speak(u);
+}
+function toggleZh(){
+  var e=document.getElementById('qzZh');var b=document.getElementById('qzZhBtn');
+  if(e.style.display==='none'){e.style.display='block';b.textContent='🙈 隐藏中文'}else{e.style.display='none';b.textContent='🔍 查看中文'}
+}
+// 左右滑动切题
+var touchX=0;
+function qTouchStart(ev){touchX=ev.touches[0].clientX}
+function qTouchEnd(ev){
+  var dx=ev.changedTouches[0].clientX-touchX;
+  if(dx<-50){nextQ()}else if(dx>50){prevQ()}
+}
+function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr}
+// init
+(function(){
+  var u=localStorage.getItem('ptu');
+  if(u){showTab(0);}else{document.getElementById('lo').style.display='flex';}
+})();
+</script>
+</body>
+</html>
